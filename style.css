@@ -242,15 +242,7 @@ body {
 }
 
 .c4-held-disc {
-  position: absolute;
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  background: rgba(35, 131, 226, 0.55);
-  border: 1.5px solid #2383e2;
-  pointer-events: none;
-  z-index: 3;
-  transition: left 0.06s ease-out;
+  display: none;
 }
 
 .c4-col {
@@ -272,7 +264,8 @@ body {
 }
 
 .c4-cell.preview {
-  border-color: rgba(35, 131, 226, 0.65);
+  border: 1.5px dotted #2383e2;
+  background: transparent;
 }
 
 .c4-disc {
