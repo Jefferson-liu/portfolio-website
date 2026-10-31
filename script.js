@@ -398,6 +398,7 @@ const PROJ_IDS = ["proj-chorus", "proj-arch", "proj-tinygpt", "proj-transformer"
 const ALL_IDS = [...EXP_IDS, ...PROJ_IDS];
 const expandedRows = new Set();
 let currentRunId = 0;
+let lastQueryCmd = "";
 
 const COPY_STATE = {
   simple: {
@@ -490,6 +491,7 @@ function clearExtras() {
 
 function clearAgent() {
   currentRunId++;
+  lastQueryCmd = "";
   document.getElementById("agent-input").value = "";
   document.getElementById("agent-trace-container").classList.add("hidden");
   document.getElementById("agent-clear").classList.add("hidden");
@@ -987,9 +989,12 @@ function spawnConnectFourWidget(container) {
  * ========================================================= */
 async function runAgentQuery(e) {
   if (e) e.preventDefault();
-  const q = document.getElementById("agent-input").value.trim();
+  const inputEl = document.getElementById("agent-input");
+  const q = inputEl.value.trim();
   if (!q) return;
 
+  lastQueryCmd = q.toLowerCase();
+  inputEl.value = "";
   const runId = ++currentRunId;
 
   const container = document.getElementById("agent-trace-container");
@@ -1152,8 +1157,7 @@ if (typeof document !== "undefined") {
       const isAlreadySoleExpanded = expandedRows.size === 1 && expandedRows.has(rowId);
       if (isAlreadySoleExpanded) {
         collapseAllRows();
-        const input = document.getElementById("agent-input");
-        if (rowId === "proj-tinygpt" && input && input.value.trim().toLowerCase() === "tinygpt") {
+        if (rowId === "proj-tinygpt" && lastQueryCmd === "tinygpt") {
           clearAgent();
         }
       } else {
@@ -1175,8 +1179,7 @@ if (typeof document !== "undefined") {
     ) {
       if (expandedRows.size > 0) {
         collapseAllRows();
-        const input = document.getElementById("agent-input");
-        if (input && input.value.trim().toLowerCase() === "tinygpt") {
+        if (lastQueryCmd === "tinygpt") {
           clearAgent();
         }
       }
