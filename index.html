@@ -2,331 +2,168 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>My Portfolio</title>
+    <title>Jefferson Liu</title>
     <link rel="stylesheet" href="style.css" />
     <link rel="stylesheet" href="mediaqueries.css" />
   </head>
   <body>
-    <nav id="desktop-nav">
-      <div class="logo">Jefferson Liu</div>
-      <div>
-        <ul class="nav-links">
-          <li><a href="#about">About</a></li>
-          <li><a href="#experience">Experience</a></li>
-          <li><a href="#projects">Projects</a></li>
-          <li><a href="#contact">Contact</a></li>
-        </ul>
-      </div>
-    </nav>
-    <nav id="hamburger-nav">
-      <div class="logo">Jefferson Liu</div>
-      <div class="hamburger-menu">
-        <div class="hamburger-icon" onclick="toggleMenu()">
-          <span></span>
-          <span></span>
-          <span></span>
-        </div>
-        <div class="menu-links">
-          <li><a href="#about" onclick="toggleMenu()">About</a></li>
-          <li><a href="#experience" onclick="toggleMenu()">Experience</a></li>
-          <li><a href="#projects" onclick="toggleMenu()">Projects</a></li>
-          <li><a href="#contact" onclick="toggleMenu()">Contact</a></li>
-        </div>
-      </div>
-    </nav>
-    <section id="profile">
-      <div class="section__text">
-        <p class="section__text__p1">Hello, I'm</p>
-        <h1 class="title">Jefferson Liu</h1>
-        <p class="section__text__p2">Software Developer</p>
-        <div class="btn-container">
-          <button
-            class="btn btn-color-2"
-            onclick="window.open('./assets/resume.pdf')"
-          >
-            Download Resume
-          </button>
-          <button class="btn btn-color-1" onclick="location.href='./#contact'">
-            Contact Info
-          </button>
-        </div>
-        <div id="socials-container">
-          <img
-            src="./assets/linkedin.png"
-            alt="My LinkedIn profile"
-            class="icon"
-            onclick="location.href='https://www.linkedin.com/in/jefferson-liu-847b09186/?originalSubdomain=ca'"
-          />
-          <img
-            src="./assets/github.png"
-            alt="My Github profile"
-            class="icon"
-            onclick="location.href='https://github.com/Jefferson-liu'"
-          />
-        </div>
-      </div>
-    </section>
-    <section id="about">
-      <p class="section__text__p1">Get To Know More</p>
-      <h1 class="title">About Me</h1>
-      <div class="section-container">
-        <div class="section__pic-container">
-          <img src="./assets/profile-pic.jpg" alt="Jefferson Liu profile picture" class = "about-pic"/>
-        </div>
-        <div class="about-details-container">
-          <div class="about-containers">
-            <div class="details-container">
-              <img
-                src="./assets/experience.png"
-                alt="Experience icon"
-                class="icon"
-              />
-              <h3>Experience</h3>
-              <p>2+ years <br />Software Development <br /> 1+ years <br /> Machine Learning</p>
-            </div>
-            <div class="details-container">
-              <img
-                src="./assets/education.png"
-                alt="Education icon"
-                class="icon"
-              />
-              <h3>Education</h3>
-              <p>B.Sc. Bachelors Degree</p>
-            </div>
+    <main class="page">
+      <!-- LANDING -->
+      <header class="intro">
+        <h1 class="name">Jefferson Liu</h1>
+        <p class="subtitle">building agents</p>
+
+        <p class="bio">
+          I double majored in Computer Science and Cognitive Science at the
+          University of Toronto, where I researched how AI manages context. In
+          my free time, I like to cook.
+        </p>
+
+        <nav class="links">
+          <a href="https://github.com/Jefferson-liu" target="_blank" rel="noopener noreferrer">GitHub</a>
+          <span class="dot">·</span>
+          <a href="https://www.linkedin.com/in/jefferson-liu-847b09186/" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+          <span class="dot">·</span>
+          <a href="mailto:jeffersonn.liu@gmail.com">Email</a>
+          <span class="dot">·</span>
+          <a href="./assets/resume.pdf" target="_blank" rel="noopener noreferrer">Resume</a>
+        </nav>
+
+        <!-- SEAMLESS INLINE AGENT PROMPT -->
+        <div class="agent-inline">
+          <form onsubmit="runAgentQuery(event)" class="agent-form">
+            <span class="agent-prompt-char">›</span>
+            <input
+              id="agent-input"
+              type="text"
+              placeholder="say hi"
+              autocomplete="off"
+              class="agent-input"
+            />
+            <button
+              type="button"
+              id="agent-clear"
+              onclick="clearAgent()"
+              class="agent-clear hidden"
+            >
+              esc
+            </button>
+          </form>
+
+          <div id="agent-trace-container" class="agent-output hidden">
+            <div id="tool-calls-log" class="agent-trace"></div>
+            <p id="agent-answer" class="agent-answer"></p>
           </div>
-          <div class="text-container">
-            <p>
-              I am a student double majoring in Computer Science and Cognitive Science at the University of Toronto.
-              In computer science, I am interested in machine learning, app development and backend development. 
-              On the cognitive science side, I am interested in how human creativity and AI can intersect.
-              I also read books (my favorite is the Three Body Problem) and solve logic puzzles in my free time! 
+        </div>
+      </header>
+
+      <hr class="divider" />
+
+      <!-- EXPERIENCE -->
+      <section class="section">
+        <h2 class="section-heading">Experience</h2>
+        <div class="list">
+          <div id="exp-uoft" class="row">
+            <div class="row-head">
+              <span class="row-title">AI Research Engineer · <span class="row-org">University of Toronto</span></span>
+              <span class="row-meta">Aug 2025 – May 2026</span>
+            </div>
+            <p class="row-desc">
+              Built a hybrid graph and vector RAG engine along with multi-agent search tools for an agentic AI platform.
+            </p>
+          </div>
+
+          <div id="exp-mpbsdp" class="row">
+            <div class="row-head">
+              <span class="row-title">Fullstack Developer Intern · <span class="row-org">Ontario Ministry (MPBSDP)</span></span>
+              <span class="row-meta">Sep 2024 – Aug 2025</span>
+            </div>
+            <p class="row-desc">
+              Led internal program-assessment apps and modernized Ontario's corporate payment platform with Java, Spring Boot, and Angular.
+            </p>
+          </div>
+
+          <div id="exp-mgcs" class="row">
+            <div class="row-head">
+              <span class="row-title">Software Developer Intern · <span class="row-org">Ontario Ministry (MGCS)</span></span>
+              <span class="row-meta">May 2022 – Aug 2022</span>
+            </div>
+            <p class="row-desc">
+              Built accessible React and AngularJS frontends and Java admin tools for internal ministry web apps.
             </p>
           </div>
         </div>
-      </div>
-      <img
-        src="./assets/arrow.png"
-        alt="Arrow icon"
-        class="icon arrow"
-        onclick="location.href='./#experience'"
-      />
-    </section>
-    <section id="experience">
-      <p class="section__text__p1">Explore My</p>
-      <h1 class="title">Experience</h1>
-      <div class="experience-details-container">
-        <div class="about-containers">
-          <div class="details-container">
-            <h2 class="experience-sub-title">Frontend Development</h2>
-            <div class="article-container">
-              <article>
-                <img
-                  src="./assets/checkmark.png"
-                  alt="Experience icon"
-                  class="icon"
-                />
-                <div>
-                  <h3>Html</h3>
-                  <p>Basic</p>
-                </div>
-              </article>
-              <article>
-                <img
-                  src="./assets/checkmark.png"
-                  alt="Experience icon"
-                  class="icon"
-                />
-                <div>
-                  <h3>CSS</h3>
-                  <p>Basic</p>
-                </div>
-              </article>
-              <article>
-                <img
-                  src="./assets/checkmark.png"
-                  alt="Experience icon"
-                  class="icon"
-                />
-                <div>
-                  <h3>JavaScript</h3>
-                  <p>Intermediate</p>
-                </div>
-              </article>
-              <article>
-              </article>
-            </div>
-          </div>
-          <div class="details-container">
-            <h2 class="experience-sub-title">Backend Development</h2>
-            <div class="article-container">
-              <article>
-                <img
-                  src="./assets/checkmark.png"
-                  alt="Experience icon"
-                  class="icon"
-                />
-                <div>
-                  <h3>Python</h3>
-                  <p>Experienced</p>
-                </div>
-              </article>
-              <article>
-                <img
-                  src="./assets/checkmark.png"
-                  alt="Experience icon"
-                  class="icon"
-                />
-                <div>
-                  <h3>Java</h3>
-                  <p>Experienced</p>
-                </div>
-              </article>
-              <article>
-                <img
-                  src="./assets/checkmark.png"
-                  alt="Experience icon"
-                  class="icon"
-                />
-                <div>
-                  <h3>MySql</h3>
-                  <p>Basic</p>
-                </div>
-              </article>
-              <article>
-                <img
-                  src="./assets/checkmark.png"
-                  alt="Experience icon"
-                  class="icon"
-                />
-                <div>
-                  <h3>Typescript</h3>
-                  <p>Basic</p>
-                </div>
-              </article>
-            </div>
-          </div>
-        </div>
-      </div>
-      <img
-        src="./assets/arrow.png"
-        alt="Arrow icon"
-        class="icon arrow"
-        onclick="location.href='./#projects'"
-      />
-    </section>
-    <section id="projects">
-      <p class="section__text__p1">Browse My Recent</p>
-      <h1 class="title">Projects</h1>
-      <div class="experience-details-container">
-        <div class="about-containers">
-          <div class="details-container color-container">
-            <div class="article-container">
-              <img
-                src="./assets/project-1.png"
-                alt="Emotion Detector "
-                class="project-img"
-              />
-            </div>
-            <h2 class="experience-sub-title project-title">Emotion Detector</h2>
-            <div class="btn-container">
-              <button
-                class="btn btn-color-2 project-btn"
-                onclick="location.href='https://github.com/Jefferson-liu/EmotionDetection/'"
+      </section>
+
+      <hr class="divider" />
+
+      <!-- PROJECTS -->
+      <section class="section">
+        <h2 class="section-heading">Projects</h2>
+        <div class="list">
+          <div id="proj-chorus" class="row">
+            <div class="row-head">
+              <a
+                href="https://github.com/SpaceJesusTM/openclaw-voice"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="row-title link"
               >
-                Github
-              </button>
+                Chorus ↗
+              </a>
             </div>
+            <p class="row-desc">
+              Built for the Boson AI Hackathon—designed and implemented the multi-agent overseer architecture for a real-time voice harness that routes live conversation across a team of specialized AI agents.
+            </p>
           </div>
-          <div class="details-container color-container">
-            <div class="article-container">
-              <img
-                src="./assets/project-2.png"
-                alt="Project 2"
-                class="project-img"
-              />
-            </div>
-            <h2 class="experience-sub-title project-title">Brickbreaker</h2>
-            <div class="btn-container">
-              <button
-                class="btn btn-color-2 project-btn"
-                onclick="location.href='https://github.com/Jefferson-liu/BrickBreaker'"
+
+          <div id="proj-arch" class="row">
+            <div class="row-head">
+              <a
+                href="https://github.com/Jefferson-liu/codebase-architecture-recovery"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="row-title link"
               >
-                Github
-              </button>
+                Multi-Agent Repository Architecture Recovery ↗
+              </a>
             </div>
+            <p class="row-desc">
+              Built a multi-agent system that parses and compresses large codebases to map out their high-level software architecture.
+            </p>
           </div>
-          <div class="details-container color-container">
-            <div class="article-container">
-              <img
-                src="./assets/project-3.png"
-                alt="Project 3"
-                class="project-img"
-              />
+
+          <div id="proj-tinygpt" class="row">
+            <div class="row-head">
+              <span class="row-title link">TinyGPT ↗</span>
             </div>
-            <h2 class="experience-sub-title project-title">Gamblers Choice</h2>
-            <div class="btn-container">
-              <button
-                class="btn btn-color-2 project-btn"
-                onclick="location.href='https://github.com/Jefferson-liu/course-project-gambler-s-choice'"
-              >
-                Github
-              </button>
+            <p class="row-desc">
+              Trained and quantized an 8-bit 67K-parameter causal Transformer in PyTorch that runs locally in the browser to power this site's interactive agent.
+            </p>
+          </div>
+
+          <div id="proj-transformer" class="row">
+            <div class="row-head">
+              <span class="row-title">Encoder-Only Transformer</span>
             </div>
+            <p class="row-desc">
+              Built and trained an encoder-only transformer from scratch using masked language modeling.
+            </p>
+          </div>
+
+          <div id="proj-speech" class="row">
+            <div class="row-head">
+              <span class="row-title">Cross-Category Speech Corpus Analysis</span>
+            </div>
+            <p class="row-desc">
+              Analyzed 10,000+ minutes of YouTube speech across 20+ categories to measure how LLMs are influencing everyday spoken vocabulary.
+            </p>
           </div>
         </div>
-      </div>
-      <img
-        src="./assets/arrow.png"
-        alt="Arrow icon"
-        class="icon arrow"
-        onclick="location.href='./#contact'"
-      />
-    </section>
-    <section id="contact">
-      <p class="section__text__p1">Get in Touch</p>
-      <h1 class="title">Contact Me</h1>
-      <div class="contact-info-upper-container">
-        <div class="contact-info-container">
-          <img
-            src="./assets/email.png"
-            alt="Email icon"
-            class="icon contact-icon email-icon"
-          />
-          <p><a href="mailto:ttukig2000@gmail.com">ttukig2000@gmail.com</a></p>
-        </div>
-        <div class="contact-info-container">
-          <img
-            src="./assets/email.png"
-            alt="Email icon"
-            class="icon contact-icon email-icon"
-          />
-          <p><a href="mailto:jeffersonn.liu@mail.utoronto.ca">jeffersonn.liu@mail.utoronto.ca</a></p>
-        </div>
-        <div class="contact-info-container">
-          <img
-            src="./assets/linkedin.png"
-            alt="LinkedIn icon"
-            class="icon contact-icon"
-          />
-          <p><a href="https://www.linkedin.com">Jefferson's LinkedIn</a></p>
-        </div>
-      </div>
-    </section>
-    <footer>
-      <nav>
-        <div class="nav-links-container">
-          <ul class="nav-links">
-            <li><a href="#about">About</a></li>
-            <li><a href="#experience">Experience</a></li>
-            <li><a href="#projects">Projects</a></li>
-            <li><a href="#contact">Contact</a></li>
-          </ul>
-        </div>
-      </nav>
-      <p>Copyright &#169; 2023 Jefferson Liu. All Rights Reserved.</p>
-    </footer>
+      </section>
+    </main>
+
     <script src="script.js"></script>
   </body>
 </html>
