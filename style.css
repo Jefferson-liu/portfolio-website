@@ -41,6 +41,7 @@ body {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
+  margin-bottom: 2.25rem;
 }
 
 .name {
@@ -139,6 +140,8 @@ body {
 
 .agent-output {
   padding-top: 0.75rem;
+  padding-bottom: 1.25rem;
+  border-bottom: 1px solid var(--border);
   display: flex;
   flex-direction: column;
   gap: 0.4rem;
@@ -225,6 +228,8 @@ body {
 }
 
 .c4-board {
+  position: relative;
+  overflow: hidden;
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   gap: 4px;
@@ -234,6 +239,18 @@ body {
   background: transparent;
   user-select: none;
   touch-action: manipulation;
+}
+
+.c4-held-disc {
+  position: absolute;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: rgba(35, 131, 226, 0.55);
+  border: 1.5px solid #2383e2;
+  pointer-events: none;
+  z-index: 3;
+  transition: left 0.06s ease-out;
 }
 
 .c4-col {
@@ -255,8 +272,7 @@ body {
 }
 
 .c4-cell.preview {
-  border-color: #2383e2;
-  background: rgba(35, 131, 226, 0.14);
+  border-color: rgba(35, 131, 226, 0.65);
 }
 
 .c4-disc {
@@ -279,17 +295,21 @@ body {
 }
 
 .c4-disc.dropping {
-  animation: c4-drop 180ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: c4-drop var(--drop-ms, 200ms) cubic-bezier(0.32, 0.04, 0.6, 1) forwards;
 }
 
 @keyframes c4-drop {
   0% {
-    opacity: 0;
-    transform: translateY(-12px) scale(0.88);
+    transform: translateY(var(--drop-y, -40px));
+  }
+  84% {
+    transform: translateY(0);
+  }
+  92% {
+    transform: translateY(-2.5px);
   }
   100% {
-    opacity: 1;
-    transform: translateY(0) scale(1);
+    transform: translateY(0);
   }
 }
 

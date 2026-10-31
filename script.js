@@ -709,28 +709,82 @@ function spawnConnectFourWidget(container) {
   const boardEl = document.createElement("div");
   boardEl.className = "c4-board";
 
+  const heldDisc = document.createElement("div");
+  heldDisc.className = "c4-held-disc hidden";
+  boardEl.appendChild(heldDisc);
+
   // Build persistent 7x6 DOM grid so hover previews never interrupt active drop animations
   const cellEls = Array.from({ length: C4_ROWS }, () => new Array(C4_COLS));
   const discEls = Array.from({ length: C4_ROWS }, () => new Array(C4_COLS));
 
   let state;
 
+  function updateCursorDisc(e, colIdx) {
+    if (!state || state.gameOver || state.turn !== 1 || colIdx < 0) {
+      heldDisc.classList.add("hidden");
+      return;
+    }
+    const dropRow = c4GetLowestRow(state.grid, colIdx);
+    if (dropRow === -1) {
+      heldDisc.classList.add("hidden");
+      return;
+    }
+    if (e && typeof e.clientY === "number" && cellEls[dropRow][colIdx].getBoundingClientRect) {
+      const boardRect = boardEl.getBoundingClientRect();
+      const targetRect = cellEls[dropRow][colIdx].getBoundingClientRect();
+      const topRect = cellEls[0][colIdx].getBoundingClientRect();
+      const rPx = targetRect.height / 2 || 12;
+
+      const minY = topRect.top + rPx;
+      const maxY = targetRect.top + rPx;
+      const clampedY = Math.max(minY, Math.min(maxY, e.clientY));
+
+      heldDisc.style.left = `${targetRect.left - boardRect.left}px`;
+      heldDisc.style.top = `${clampedY - boardRect.top - rPx}px`;
+      heldDisc.classList.remove("hidden");
+
+      state.cursorDropOffset = Math.min(-4, Math.round(clampedY - maxY));
+    } else {
+      // Fallback for synthetic/headless events without bounding rects
+      state.cursorDropOffset = -Math.max(12, dropRow * 30);
+    }
+  }
+
+  boardEl.onmouseleave = () => {
+    if (state) {
+      state.hoverCol = -1;
+      heldDisc.classList.add("hidden");
+      updatePreview();
+    }
+  };
+
   for (let c = 0; c < C4_COLS; c++) {
     const colEl = document.createElement("div");
     colEl.className = "c4-col";
-    colEl.onmouseenter = () => {
-      if (state && !state.gameOver && state.turn === 1 && state.hoverCol !== c) {
+    colEl.onmouseenter = (e) => {
+      if (state && !state.gameOver && state.turn === 1) {
         state.hoverCol = c;
         updatePreview();
+        updateCursorDisc(e, c);
+      }
+    };
+    colEl.onmousemove = (e) => {
+      if (state && !state.gameOver && state.turn === 1) {
+        if (state.hoverCol !== c) {
+          state.hoverCol = c;
+          updatePreview();
+        }
+        updateCursorDisc(e, c);
       }
     };
     colEl.onmouseleave = () => {
       if (state && state.hoverCol === c) {
         state.hoverCol = -1;
+        heldDisc.classList.add("hidden");
         updatePreview();
       }
     };
-    colEl.onclick = () => onColClick(c);
+    colEl.onclick = (e) => onColClick(c, e);
 
     for (let r = 0; r < C4_ROWS; r++) {
       const cell = document.createElement("div");
@@ -754,11 +808,13 @@ function spawnConnectFourWidget(container) {
       grid: Array.from({ length: C4_ROWS }, () => new Array(C4_COLS).fill(0)),
       turn: 1,
       hoverCol: -1,
+      cursorDropOffset: -40,
       lastMove: null,
       animMove: null,
       winCells: null,
       gameOver: false,
     };
+    heldDisc.classList.add("hidden");
     for (let r = 0; r < C4_ROWS; r++) {
       for (let c = 0; c < C4_COLS; c++) {
         cellEls[r][c].className = "c4-cell";
@@ -828,7 +884,7 @@ function spawnConnectFourWidget(container) {
     const dropRow = c4GetLowestRow(state.grid, bestCol);
     state.grid[dropRow][bestCol] = 2;
     state.lastMove = [dropRow, bestCol];
-    state.animMove = [dropRow, bestCol];
+    state.animMove = { r: dropRow, c: bestCol, dropY: -Math.max(8, dropRow * 30) };
 
     const dt = (performance.now() - t0).toFixed(2);
     const evalStr = bestScore >= 0 ? `+${Math.round(bestScore)}` : `${Math.round(bestScore)}`;
@@ -848,14 +904,18 @@ function spawnConnectFourWidget(container) {
     renderBoard();
   }
 
-  function onColClick(col) {
+  function onColClick(col, e) {
     if (state.gameOver || state.turn !== 1) return;
     const dropRow = c4GetLowestRow(state.grid, col);
     if (dropRow === -1) return;
 
+    updateCursorDisc(e, col);
+    const dropY = state.cursorDropOffset || -Math.max(12, dropRow * 30);
+    heldDisc.classList.add("hidden");
+
     state.grid[dropRow][col] = 1;
     state.lastMove = [dropRow, col];
-    state.animMove = [dropRow, col];
+    state.animMove = { r: dropRow, c: col, dropY };
 
     const winLine = c4CheckWin(state.grid, 1);
     if (winLine) {
@@ -875,8 +935,8 @@ function spawnConnectFourWidget(container) {
 
     state.turn = 2;
     renderBoard();
-    const dropDelay = 180 + dropRow * 35;
-    setTimeout(aiStep, dropDelay);
+    const dropMs = Math.max(90, Math.min(250, Math.round(Math.abs(dropY) * 1.3 + 75)));
+    setTimeout(aiStep, dropMs + 40);
   }
 
   function renderBoard() {
@@ -898,7 +958,11 @@ function spawnConnectFourWidget(container) {
           disc.classList.add("ai");
         }
 
-        if (state.animMove && state.animMove[0] === r && state.animMove[1] === c) {
+        if (state.animMove && state.animMove.r === r && state.animMove.c === c) {
+          const dy = state.animMove.dropY;
+          const dms = Math.max(90, Math.min(250, Math.round(Math.abs(dy) * 1.3 + 75)));
+          disc.style.setProperty("--drop-y", `${dy}px`);
+          disc.style.setProperty("--drop-ms", `${dms}ms`);
           disc.classList.remove("dropping");
           void disc.offsetWidth;
           disc.classList.add("dropping");
