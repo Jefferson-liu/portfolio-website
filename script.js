@@ -504,6 +504,7 @@ function triggerCmd(cmd) {
   input.value = cmd;
   if (cmd === "tinygpt") {
     window.scrollTo({ top: 0, behavior: "smooth" });
+    if (typeof input.focus === "function") input.focus();
   }
   runAgentQuery(null);
 }
