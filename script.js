@@ -486,6 +486,11 @@ function clearExtras() {
   if (c4El) c4El.remove();
 }
 
+function isAgentOpen() {
+  const c = document.getElementById("agent-trace-container");
+  return !!c && !c.classList.contains("hidden");
+}
+
 function clearAgent() {
   currentRunId++;
   lastQueryCmd = "";
@@ -1159,6 +1164,11 @@ if (typeof document !== "undefined") {
           clearAgent();
         }
       } else {
+        // Clicking a different row dismisses an open agent box first
+        // (clearAgent also collapses rows, so expand the new row after).
+        if (rowId !== "proj-tinygpt" && isAgentOpen()) {
+          clearAgent();
+        }
         mutateRowsDetail(ALL_IDS, "simple");
         mutateRowsDetail([rowId], "extended");
         focusRows([rowId]);
@@ -1175,11 +1185,10 @@ if (typeof document !== "undefined") {
       !e.target.closest("#agent-trace-container") &&
       !e.target.closest("form")
     ) {
-      if (expandedRows.size > 0) {
+      if (isAgentOpen()) {
+        clearAgent();
+      } else if (expandedRows.size > 0) {
         collapseAllRows();
-        if (lastQueryCmd === "tinygpt") {
-          clearAgent();
-        }
       }
     }
   });
