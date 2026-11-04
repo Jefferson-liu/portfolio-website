@@ -400,31 +400,28 @@ const expandedRows = new Set();
 let currentRunId = 0;
 let lastQueryCmd = "";
 
+const SIMPLE_COPY = Object.fromEntries(
+  ALL_IDS.map((id) => [
+    id,
+    document.querySelector(`#${id} .row-desc`)?.textContent.trim() || "",
+  ])
+);
+
 const COPY_STATE = {
-  simple: {
-    "exp-uoft": "Built a hybrid graph and vector RAG engine along with multi-agent search tools for an agentic AI platform.",
-    "exp-mpbsdp": "Led internal program-assessment apps and modernized Ontario's corporate payment platform with Java, Spring Boot, and Angular.",
-    "exp-mgcs": "Built accessible React and AngularJS frontends and Java admin tools for internal ministry web apps.",
-    "proj-chorus": "Built for the Boson AI Hackathon—designed and implemented the multi-agent overseer architecture for a real-time voice harness that routes live conversation across a team of specialized AI agents.",
-    "proj-arch": "Built a multi-agent system that parses and compresses large codebases to map out their high-level software architecture.",
-    "proj-tinygpt": "Trained and quantized an 8-bit 67K-parameter causal Transformer in PyTorch that runs locally in the browser to power this site's interactive agent.",
-    "proj-transformer": "Built and trained an encoder-only transformer from scratch using masked language modeling.",
-    "proj-speech": "Analyzed 10,000+ minutes of YouTube speech across 20+ categories to measure how LLMs are influencing everyday spoken vocabulary."
-  },
   extended: {
-    "exp-uoft": "Built a hybrid knowledge-graph and vector RAG context engine using Neo4j and pgvector/PostgreSQL, improving factual grounding by 15% and retrieval precision by 25% over baseline vector search. Also designed multi-agent graph traversal workflows with LangChain and the Claude Agent SDK, built a custom MCP server for external tool access, and ran prompt A/B evaluations across OpenAI and Anthropic models.",
+    "exp-uoft": "Built an agentic RAG service including a RAG pipeline, hybrid graph/vector retrieval with temporal information based on Graphiti, using Neo4j, pgvector and postgresql. Also built multi-agent search features using Langchain and Claude SDK as well as MCP and API endpoints for a source-of-truth database of product information.",
     "exp-mpbsdp": "Modernized Ontario's corporate payment platform (Transfer Payment Ontario) with Java, Spring Boot, Angular, and TypeScript, designing REST APIs for enterprise payment workflows. Also automated applicant funding-viability scoring for Experience Ontario using Oracle SQL and led a team of interns building an internal program-assessment web app.",
     "exp-mgcs": "Built accessible, AODA/WCAG-compliant web frontends in React and AngularJS serving 100+ ministry clients across Ontario. Also developed internal Java and XML administrative tools in Eclipse and ran regression testing across agile sprints.",
-    "proj-chorus": "Built for the Boson AI Hackathon—designed and implemented the multi-agent overseer architecture for a real-time voice harness powered by Pipecat and Boson Higgs Realtime 1.5. A silent overseer LLM monitors live conversation and dispatches tool calls (call_agent) to route tasks across isolated Docker OpenClaw agents with hot-context caching.",
+    "proj-chorus": "Built for the Boson AI Hackathon — I designed and implemented the multi-agent overseer architecture for a real-time voice harness powered by Boson Higgs Realtime 1.5. An overseerlayer running on Higgs 1.5 realtime (which has async tool calling) monitors the conversation and live routes conversation context to audio based agents, which leads to seamless multi-agent voice interactions and context handoffs.",
     "proj-arch": "Replicated the ArchAgent paper (arXiv 2601.13007) to recover high-level software architecture from monorepo-scale codebases. Uses tree-sitter for static AST dependency extraction, adaptive file clustering, and multi-agent context compression so large repositories fit cleanly inside LLM context windows.",
-    "proj-tinygpt": "Trained a two-stage 67K-parameter language model in PyTorch (AdamW, cross-entropy loss) on a synthetic portfolio corpus, combining a BoW/bigram neural intent encoder with a 4-head causal Transformer decoder (d_model=48, RMSNorm, SiLU MLP, KV-cache). Exported via symmetric Int8 weight quantization (W8A32) to run sub-millisecond autoregressive token generation, DOM tool calls, and a minimax Connect Four engine in pure frontend JavaScript.",
-    "proj-transformer": "Built and pre-trained a single-head self-attention encoder-only Transformer from scratch in PyTorch and PyTorch Lightning. Implemented a custom masked language modeling (MLM) data collator and training pipeline to learn contextual token representations.",
-    "proj-speech": "Built a Python data pipeline (Pandas, NumPy, SciPy) over 10,000+ minutes of YouTube speech across 20+ content categories to measure how LLM-favored vocabulary is entering everyday human speech. Quantified word-frequency shifts using smoothed log-odds ratios with Woolf's standard error, Bonferroni-corrected two-proportion z-tests, and paired t-tests."
+    "proj-tinygpt": "I trained a two-stage 67K-parameter language model in PyTorch on a synthetic corpus of common phrases, combining a BoW/bigram neural intent encoder with a 4-head causal Transformer decoder. Exported via symmetric Int8 weight quantization to run sub-millisecond autoregressive token generation, DOM tool calls, and a minimax Connect Four engine in pure frontend JavaScript.",
+    "proj-transformer": "I wanted to understand how LLMs work so I built and pre-trained a single-head self-attention encoder-only Transformer from scratch in PyTorch and PyTorch Lightning. Implemented a custom masked language modeling (MLM) data collator and training pipeline to learn contextual token representations.",
+    "proj-speech": "I was curious on how LLMs affect everyday language, so I built a Python data pipeline using Pandas, NumPy, and SciPy and analyzed 10,000+ minutes of YouTube speech across 20+ content categories to measure how LLM-favored vocabulary is entering everyday human speech. Quantified word-frequency shifts using smoothed log-odds ratios with Woolf's standard error, Bonferroni-corrected two-proportion z-tests, and paired t-tests."
   }
 };
 
 function mutateRowsDetail(ids, mode) {
-  const map = COPY_STATE[mode];
+  const map = mode === "simple" ? SIMPLE_COPY : COPY_STATE[mode];
   for (const id of ids) {
     const el = document.querySelector(`#${id} .row-desc`);
     if (el && map[id]) el.textContent = map[id];
